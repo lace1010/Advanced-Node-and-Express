@@ -30,9 +30,12 @@ app.use(passport.session());
 
 app.route("/").get((req, res) => {
   // I don't know why it is just pug/index.pug. views is not required. If we use "views/pug/index.pug" it will not work
-  res.render("pug/index.pug", { title: "Hello", message: "Please login" });
-  /* FCC example way is as follows 
-  res.render(process.cwd() + '/views/pug/index', {title: 'Hello', message: 'Please login'}); */
+  //res.render("pug/index.pug", { title: "Hello", message: "Please login" });
+  //FCC example way is as follows, process.cwd() just gets the directory before (the url before the slashes. ex: espn.com...)
+  res.render(process.cwd() + "/views/pug/index", {
+    title: "Hello",
+    message: "Please login",
+  });
 });
 
 const PORT = process.env.PORT || 3000;

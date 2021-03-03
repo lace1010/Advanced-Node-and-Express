@@ -6,6 +6,7 @@ const fccTesting = require("./freeCodeCamp/fcctesting.js");
 
 const passport = require("passport");
 const session = require("express-session");
+const ObjectID = require("mongodb").ObjectID; // Need this to make a query serch for a Mongo _id
 
 const app = express();
 // Express needs to know which template engine we are using
@@ -28,10 +29,18 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
+passport.serializeUser((user, done) => {
+  done(null, user.id);
+});
+
+passport.deserializeUser((user, done) => {
+  // myDataBase.findOne({ _id: new ObjectID(id)}, (error, doc) => {
+  done(null, null);
+  // })
+});
+
 app.route("/").get((req, res) => {
-  // I don't know why it is just pug/index.pug. views is not required. If we use "views/pug/index.pug" it will not work
-  //res.render("pug/index.pug", { title: "Hello", message: "Please login" });
-  //FCC example way is as follows, process.cwd() just gets the directory before (the url before the slashes. ex: espn.com...)
+  // process.cwd() just gets the directory before (the url before the slashes. ex: espn.com...)
   res.render(process.cwd() + "/views/pug/index", {
     title: "Hello",
     message: "Please login",

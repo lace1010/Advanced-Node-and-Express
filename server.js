@@ -1,11 +1,11 @@
 "use strict";
 require("dotenv").config();
 const express = require("express");
-const myDB = require("./connection");
 const fccTesting = require("./freeCodeCamp/fcctesting.js");
 
 const passport = require("passport");
 const session = require("express-session");
+const myDB = require("./connection");
 const ObjectID = require("mongodb").ObjectID; // Need this to make a query serch for a Mongo _id
 
 const app = express();
@@ -29,21 +29,29 @@ app.use(
 app.use(passport.initialize());
 app.use(passport.session());
 
-passport.serializeUser((user, done) => {
-  done(null, user._id);
-});
+myDB(async (client) => {
+  const myDataBase = await client.db("database").collection("users");
 
-passport.deserializeUser((user, done) => {
-  // myDataBase.findOne({ _id: new ObjectID(id)}, (error, doc) => {
-  done(null, null);
-  // })
-});
+  app.route("/").get((req, res) => {
+    res.render("pug", {
+      title: "Connected to Database",
+      message: "Please login",
+    });
+  });
 
-app.route("/").get((req, res) => {
-  // process.cwd() just gets the directory before (the url before the slashes. ex: espn.com...)
-  res.render(process.cwd() + "/views/pug/index", {
-    title: "Hello",
-    message: "Please login",
+  // Need serialization and deserialization in this async function inside myDB()
+  passport.serializeUser((user, done) => {
+    done(null, user._id);
+  });
+  passport.deserializeUser((id, done) => {
+    myDB.findOne({ _id: new ObjectID(id) }, (error, doc) => {
+      done(null, doc);
+    });
+  });
+}).catch((error) => {
+  // This will display if we don't connect to database (example if string in .env is changed)
+  app.route("/").get((req, res) => {
+    res.render("pug", { title: error, message: "Unable to login" });
   });
 });
 

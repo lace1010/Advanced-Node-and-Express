@@ -49,23 +49,23 @@ myDB(async (client) => {
       done(null, doc);
     });
   });
+
+  passport.use(
+    new LocalStrategy((username, password, done) => {
+      myDataBase.findOne({ username: username }, (error, user) => {
+        if (error) return done(error);
+        if (!user) return done(null, false); // If there is no user in myDb
+        if (password !== user.password) return done(null, false); // If passwrod is not correct
+        return done(null, user); // If user exist and password is correct return the user object
+      });
+    })
+  );
 }).catch((error) => {
   // This will display if we don't connect to database (example if string in .env is changed)
   app.route("/").get((req, res) => {
     res.render("pug", { title: error, message: "Unable to login" });
   });
 });
-
-passport.use(
-  new LocalStrategy((username, password, done) => {
-    myDB.findOne({ username: username }, (error, user) => {
-      if (error) return done(error);
-      if (!user) return done(null, false); // If there is no user in myDb
-      if (password !== user.password) return done(null, false); // If passwrod is not correct
-      return done(null, user); // If user exist and password is correct return the user object
-    });
-  })
-);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

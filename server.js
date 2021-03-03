@@ -14,8 +14,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.route("/").get((req, res) => {
-  // I don't know why it is just pug/index. views is not required. If we use "views/pug/index" it will not work
-  res.render("pug/index");
+  // I don't know why it is just pug/index.pug. views is not required. If we use "views/pug/index.pug" it will not work
+  res.render("pug/index.pug", { title: "Hello", message: "Please login" });
+  /* FCC example way is as follows 
+  res.render(process.cwd() + '/views/pug/index', {title: 'Hello', message: 'Please login'}); */
 });
 
 const PORT = process.env.PORT || 3000;

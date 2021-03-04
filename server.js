@@ -51,7 +51,14 @@ myDB(async (client) => {
       }
     );
 
-  app.route("/profile").get((req, res) => {
+  // Add this function that checks if a user is authenticated. (we need this to make sure not just anyone can type out "/login" at end of url and enter )
+  const ensureAuthenticated = (req, res, next) => {
+    if (req.isAuthenticated) return next();
+    res.redirect("/");
+  };
+
+  // Check to make sure user is authenticated then render the profile page
+  app.route("/profile").get(ensureAuthenticated, (req, res) => {
     res.render(process.cwd() + "/views/pug/profile");
   });
 
@@ -68,6 +75,7 @@ myDB(async (client) => {
   passport.use(
     new LocalStrategy((username, password, done) => {
       myDataBase.findOne({ username: username }, (error, user) => {
+        console.log("User " + username + " attempted to log in.");
         if (error) return done(error);
         if (!user) return done(null, false); // If there is no user in myDb
         if (password !== user.password) return done(null, false); // If passwrod is not correct

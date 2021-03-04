@@ -8,6 +8,7 @@ const session = require("express-session");
 const myDB = require("./connection");
 const ObjectID = require("mongodb").ObjectID; // Need this to make a query serch for a Mongo _id
 const LocalStrategy = require("passport-local");
+const { ppid } = require("process");
 
 const app = express();
 // Express needs to know which template engine we are using
@@ -37,7 +38,21 @@ myDB(async (client) => {
     res.render("pug", {
       title: "Connected to Database",
       message: "Please login",
+      showLogin: true,
     });
+  });
+
+  app
+    .route("/login")
+    .post(
+      passport.authenticate("local", { failureRedirect: "/" }),
+      (req, res) => {
+        res.redirect("/profile");
+      }
+    );
+
+  app.route("/profile").get((req, res) => {
+    res.render(process.cwd() + "/views/pug/profile");
   });
 
   // Need serialization and deserialization in this async function inside myDB()

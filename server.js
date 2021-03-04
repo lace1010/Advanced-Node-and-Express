@@ -51,13 +51,7 @@ myDB(async (client) => {
       }
     );
 
-  // Add this function that checks if a user is authenticated. (we need this to make sure not just anyone can type out "/login" at end of url and enter )
-  const ensureAuthenticated = (req, res, next) => {
-    if (req.isAuthenticated) return next();
-    res.redirect("/");
-  };
-
-  // Check to make sure user is authenticated then render the profile page
+  // Check to make sure user is authenticated then render the profile page. ensureAuthenticated is made at bottom of code
   app.route("/profile").get(ensureAuthenticated, (req, res) => {
     res.render(process.cwd() + "/views/pug/profile");
   });
@@ -89,6 +83,12 @@ myDB(async (client) => {
     res.render("pug", { title: error, message: "Unable to login" });
   });
 });
+
+// Add this middleware function that checks if a user is authenticated. (we need this to make sure not just anyone can type out "/login" at end of url and enter )
+const ensureAuthenticated = (req, res, next) => {
+  if (req.isAuthenticated) return next(); // If true then go to next thing
+  res.redirect("/"); // Else redirect to home page
+};
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

@@ -34,14 +34,17 @@ app.use(passport.session());
 myDB(async (client) => {
   const myDataBase = await client.db("database").collection("users");
 
+  // Handle homepage
   app.route("/").get((req, res) => {
     res.render("pug", {
       title: "Connected to Database",
       message: "Please login",
-      showLogin: true,
+      showLogin: true, // If true then login form will show in index.pug
+      showRegistration: true, // If true the  registration form will show in index.pug
     });
   });
 
+  // Handle login page. If successful redirect to profile page if not redirect to homepage
   app
     .route("/login")
     .post(
@@ -64,6 +67,36 @@ myDB(async (client) => {
     res.redirect("/");
   });
 
+  // Handle when someone registers themselves as a new user
+  app.route("/register").post(
+    // first paramater is a function that finds if user exists and if not inserting new user to database
+    (req, res, next) => {
+      myDataBase.findOne({ username: req.body.username }, (error, user) => {
+        if (error) return next(error);
+        // else I]if user already exists go back to home page
+        else if (user) return res.redirect("/");
+        // Else we insert a new user in the following logic
+        else {
+          myDataBase.insertOne(
+            {
+              username: req.body.username,
+              password: req.body.password,
+            },
+            (error, doc) => {
+              if (error) return res.redirect("/");
+              else next(null, doc.ops[0]);
+            }
+          );
+        }
+      });
+    },
+    // Second paramater authenticates the new user and redirects to profile page if passed and to homepage if failed
+    passport.authenticate("local", { failureRedirect: "/" }),
+    (req, res) => {
+      res.redirect("/profile");
+    }
+  );
+
   // Handle missing pages (404)
   app.use((req, res, next) => {
     res.status(404).type("text").send("Not Found");
@@ -74,7 +107,7 @@ myDB(async (client) => {
     done(null, user._id);
   });
   passport.deserializeUser((id, done) => {
-    myDB.findOne({ _id: new ObjectID(id) }, (error, doc) => {
+    myDataBase.findOne({ _id: new ObjectID(id) }, (error, doc) => {
       done(null, doc);
     });
   });

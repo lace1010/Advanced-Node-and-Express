@@ -8,6 +8,7 @@ const session = require("express-session");
 const myDB = require("./connection");
 const ObjectID = require("mongodb").ObjectID; // Need this to make a query serch for a Mongo _id
 const LocalStrategy = require("passport-local");
+const bcrypt = require("bcrypt");
 const { ppid } = require("process");
 
 const app = express();
@@ -71,6 +72,8 @@ myDB(async (client) => {
   app.route("/register").post(
     // first paramater is a function that finds if user exists and if not inserting new user to database
     (req, res, next) => {
+      // use hash to store password to keep information secure with bcrypt
+      const hash = bcrypt.hashSync(req.body.password, 12);
       myDataBase.findOne({ username: req.body.username }, (error, user) => {
         if (error) return next(error);
         // else I]if user already exists go back to home page
@@ -80,7 +83,7 @@ myDB(async (client) => {
           myDataBase.insertOne(
             {
               username: req.body.username,
-              password: req.body.password,
+              password: hash,
             },
             (error, doc) => {
               if (error) return res.redirect("/");
@@ -118,7 +121,7 @@ myDB(async (client) => {
         console.log("User " + username + " attempted to log in.");
         if (error) return done(error);
         if (!user) return done(null, false); // If there is no user in myDb
-        if (password !== user.password) return done(null, false); // If passwrod is not correct
+        if (!bcrypt.compare(password, user.password)) return done(null, false); // If passwrod is not correct (use bcrypt to keep information secure)
         return done(null, user); // If user exist and password is correct return the user object
       });
     })

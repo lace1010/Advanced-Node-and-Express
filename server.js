@@ -58,6 +58,17 @@ myDB(async (client) => {
     });
   });
 
+  // Handle logout page by unauthenticating user and redirecting to homepage
+  app.route("/logout").get((req, res) => {
+    req.logout(); // In passport, unauthenticating a user is as easy as just calling req.logout();
+    res.redirect("/");
+  });
+
+  // Handle missing pages (404)
+  app.use((req, res, next) => {
+    res.status(404).type("text").send("Not Found");
+  });
+
   // Need serialization and deserialization in this async function inside myDB()
   passport.serializeUser((user, done) => {
     done(null, user._id);

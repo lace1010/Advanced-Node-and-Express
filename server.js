@@ -53,7 +53,9 @@ myDB(async (client) => {
 
   // Check to make sure user is authenticated then render the profile page. ensureAuthenticated is made at bottom of code
   app.route("/profile").get(ensureAuthenticated, (req, res) => {
-    res.render(process.cwd() + "/views/pug/profile");
+    res.render(process.cwd() + "/views/pug/profile", {
+      username: req.user.username,
+    });
   });
 
   // Need serialization and deserialization in this async function inside myDB()

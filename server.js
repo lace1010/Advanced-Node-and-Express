@@ -9,7 +9,6 @@ const myDB = require("./connection");
 const ObjectID = require("mongodb").ObjectID; // Need this to make a query serch for a Mongo _id
 const LocalStrategy = require("passport-local");
 const bcrypt = require("bcrypt");
-const { ppid } = require("process");
 
 const app = express();
 // Express needs to know which template engine we are using
@@ -121,7 +120,10 @@ myDB(async (client) => {
         console.log("User " + username + " attempted to log in.");
         if (error) return done(error);
         if (!user) return done(null, false); // If there is no user in myDb
-        if (!bcrypt.compare(password, user.password)) return done(null, false); // If passwrod is not correct (use bcrypt to keep information secure)
+        if (!bcrypt.compareSync(password, user.password)) {
+          // If passwrod is not correct (use bcrypt to keep information secure)
+          return done(null, false);
+        }
         return done(null, user); // If user exist and password is correct return the user object
       });
     })

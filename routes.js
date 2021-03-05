@@ -9,6 +9,7 @@ module.exports = function (app, myDataBase) {
       message: "Please login",
       showLogin: true, // If true then login form will show in index.pug
       showRegistration: true, // If true the  registration form will show in index.pug
+      showSocialAuth: true, // If true the social ligin form will show in index.pug
     });
   });
 
@@ -66,6 +67,17 @@ module.exports = function (app, myDataBase) {
       res.redirect("/profile");
     }
   );
+
+  // Handles when someone wants to login through github
+  app.route("/auth/github").get(passport.authenticate("github"));
+  app
+    .route("/auth/github/callback")
+    .get(
+      passport.authenticate("github", { failureRedirect: "/" }),
+      (req, res) => {
+        res.redirect("/profile");
+      }
+    );
 
   // Handle missing pages (404)
   app.use((req, res, next) => {

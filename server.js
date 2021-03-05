@@ -46,45 +46,6 @@ myDB(async (client) => {
         res.redirect("/profile");
       }
     );
-
-  passport.use(
-    new GitHubStrategy(
-      {
-        clientID: process.env.GITHUB_CLIENT_ID,
-        clientSecret: process.env.GITHUB_CLIENT_SECRET,
-        callbackURL:
-          "https://advanced-node-express.herokuapp.com/auth/github/callback",
-      },
-      function (accessToken, refreshToken, profile, cb) {
-        console.log(profile);
-        //Database logic here with callback containing our user object
-        db.collection("socialusers").findAndModify(
-          { id: profile.id },
-          {},
-          {
-            $setOnInsert: {
-              id: profile.id,
-              name: profile.displayName || "John Doe",
-              photo: profile.photos[0].value || "",
-              email: profile.emails[0].value || "No public email",
-              created_on: new Date(),
-              provider: profile.provider || "",
-            },
-            $set: {
-              last_login: new Date(),
-            },
-            $inc: {
-              login_count: 1,
-            },
-          },
-          { upsert: true, new: true },
-          (err, doc) => {
-            return cb(null, doc.value);
-          }
-        );
-      }
-    )
-  );
 }).catch((error) => {
   // This will display if we don't connect to database (example if string in .env is changed)
   app.route("/").get((req, res) => {

@@ -79,21 +79,6 @@ module.exports = function (app, myDataBase) {
       }
     );
 
-  // GitHubStrategy authetication
-  passport.use(
-    new GitHubStrategy(
-      {
-        clientID: process.env.GITHUB_CLIENT_ID,
-        clientSecret: process.env.GITHUB_CLIENT_SECRET,
-        callbackURL:
-          "https://advanced-node-express.herokuapp.com/auth/github/callback",
-      },
-      function (accessToken, refreshToken, profile, cb) {
-        console.log(profile);
-      }
-    )
-  );
-
   // Handle missing pages (404)
   app.use((req, res, next) => {
     res.status(404).type("text").send("Not Found");

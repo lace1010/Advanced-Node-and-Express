@@ -34,18 +34,8 @@ app.use(passport.session());
 myDB(async (client) => {
   const myDataBase = await client.db("database").collection("users");
   // Use next two lines so we can use module.export in other files to use app and myDataBase in them
-  //  routes(app, myDataBase);
-  // auth(app, myDataBase);
-  // Handles when someone wants to login through github
-  app.route("/auth/github").get(passport.authenticate("github"));
-  app
-    .route("/auth/github/callback")
-    .get(
-      passport.authenticate("github", { failureRedirect: "/" }),
-      (req, res) => {
-        res.redirect("/profile");
-      }
-    );
+  routes(app, myDataBase);
+  auth(app, myDataBase);
 }).catch((error) => {
   // This will display if we don't connect to database (example if string in .env is changed)
   app.route("/").get((req, res) => {

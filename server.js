@@ -6,10 +6,8 @@ const fccTesting = require("./freeCodeCamp/fcctesting.js");
 const passport = require("passport");
 const session = require("express-session");
 const myDB = require("./connection");
-
 const routes = require("./routes.js"); // passing all routes to this file to have clean code
 const auth = require("./auth.js"); // passing all auth to this file to have clean code
-const GitHubStrategy = require("passport-github").Strategy;
 
 const app = express();
 // Express needs to know which template engine we are using
@@ -37,31 +35,6 @@ myDB(async (client) => {
   // Use next two lines so we can use module.export in other files to use app and myDataBase in them
   routes(app, myDataBase);
   auth(app, myDataBase);
-  app.route("/auth/github").get(passport.authenticate("github"));
-
-  app
-    .route("/auth/github/callback")
-    .get(
-      passport.authenticate("github", { failureRedirect: "/" }),
-      (req, res) => {
-        res.redirect("/profile");
-      }
-    );
-
-  // GitHubStrategy authetication
-  passport.use(
-    new GitHubStrategy(
-      {
-        clientID: process.env.GITHUB_CLIENT_ID,
-        clientSecret: process.env.GITHUB_CLIENT_SECRET,
-        callbackURL:
-          "https://advanced-node-express.herokuapp.com/auth/github/callback",
-      },
-      function (accessToken, refreshToken, profile, cb) {
-        console.log(profile);
-      }
-    )
-  );
 }).catch((error) => {
   // This will display if we don't connect to database (example if string in .env is changed)
   app.route("/").get((req, res) => {

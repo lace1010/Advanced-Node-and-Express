@@ -1,7 +1,9 @@
+require("dotenv").config();
 const passport = require("passport");
 const bcrypt = require("bcrypt");
 const LocalStrategy = require("passport-local");
 const ObjectID = require("mongodb").ObjectID; // Need this to make a query serch for a Mongo _id
+const GitHubStrategy = require("passport-github").Strategy;
 
 module.exports = function (app, myDataBase) {
   // Need serialization and deserialization in this async function inside myDB()
@@ -15,6 +17,7 @@ module.exports = function (app, myDataBase) {
     });
   });
 
+  // LocalStrategy authentication
   passport.use(
     new LocalStrategy((username, password, done) => {
       myDataBase.findOne({ username: username }, (error, user) => {
@@ -28,5 +31,21 @@ module.exports = function (app, myDataBase) {
         return done(null, user); // If user exist and password is correct return the user object
       });
     })
+  );
+
+  // GitHubStrategy authetication
+  passport.use(
+    new GitHubStrategy(
+      {
+        clientID: process.env.GITHUB_CLIENT_ID,
+        clientSecret: process.env.GITHUB_CLIENT_SECRET,
+        callbackURL:
+          "https://advanced-node-express.herokuapp.com/auth/github/callback",
+      },
+      function (accessToken, refreshToken, profile, cb) {
+        console.log(profile);
+        //Database logic here with callback containing our user object
+      }
+    )
   );
 };

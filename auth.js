@@ -3,7 +3,6 @@ const passport = require("passport");
 const bcrypt = require("bcrypt");
 const LocalStrategy = require("passport-local");
 const ObjectID = require("mongodb").ObjectID; // Need this to make a query serch for a Mongo _id
-const GitHubStrategy = require("passport-github").Strategy;
 
 module.exports = function (app, myDataBase) {
   // Need serialization and deserialization in this async function inside myDB()

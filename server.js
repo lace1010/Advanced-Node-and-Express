@@ -53,7 +53,7 @@ myDB(async (client) => {
         clientID: process.env.GITHUB_CLIENT_ID,
         clientSecret: process.env.GITHUB_CLIENT_SECRET,
         callbackURL:
-          "https://maroon-sugary-supernova.glitch.me/auth/github/callback",
+          "https://advanced-node-express.herokuapp.com/auth/github/callback",
       },
       function (accessToken, refreshToken, profile, cb) {
         console.log(profile);

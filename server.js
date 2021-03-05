@@ -46,6 +46,21 @@ myDB(async (client) => {
         res.redirect("/profile");
       }
     );
+
+  // GitHubStrategy authetication
+  passport.use(
+    new GitHubStrategy(
+      {
+        clientID: process.env.GITHUB_CLIENT_ID,
+        clientSecret: process.env.GITHUB_CLIENT_SECRET,
+        callbackURL:
+          "https://advanced-node-express.herokuapp.com/auth/github/callback",
+      },
+      function (accessToken, refreshToken, profile, cb) {
+        console.log(profile);
+      }
+    )
+  );
 }).catch((error) => {
   // This will display if we don't connect to database (example if string in .env is changed)
   app.route("/").get((req, res) => {

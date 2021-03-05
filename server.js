@@ -8,6 +8,7 @@ const session = require("express-session");
 const myDB = require("./connection");
 const routes = require("./routes.js"); // passing all routes to this file to have clean code
 const auth = require("./auth.js"); // passing all auth to this file to have clean code
+const GitHubStrategy = require("passport-github").Strategy;
 
 const app = express();
 // Express needs to know which template engine we are using
@@ -33,8 +34,18 @@ app.use(passport.session());
 myDB(async (client) => {
   const myDataBase = await client.db("database").collection("users");
   // Use next two lines so we can use module.export in other files to use app and myDataBase in them
-  routes(app, myDataBase);
-  auth(app, myDataBase);
+  //  routes(app, myDataBase);
+  // auth(app, myDataBase);
+  // Handles when someone wants to login through github
+  app.route("/auth/github").get(passport.authenticate("github"));
+  app
+    .route("/auth/github/callback")
+    .get(
+      passport.authenticate("github", { failureRedirect: "/" }),
+      (req, res) => {
+        res.redirect("/profile");
+      }
+    );
 }).catch((error) => {
   // This will display if we don't connect to database (example if string in .env is changed)
   app.route("/").get((req, res) => {

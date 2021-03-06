@@ -66,7 +66,7 @@ myDB(async (client) => {
   io.on("connection", (socket) => {
     console.log("A user has connected");
     ++currentUsers;
-    io.emit("user count", {
+    io.emit("user", {
       name: socket.request.user.username,
       currentUsers,
       connection: true,

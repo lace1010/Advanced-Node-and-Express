@@ -75,9 +75,15 @@ module.exports = function (app, myDataBase) {
     .get(
       passport.authenticate("github", { failureRedirect: "/" }),
       (req, res) => {
-        res.redirect("/profile");
+        req.session.user_id = req.user.id;
+        res.redirect("/chat");
       }
     );
+
+  // Handles chat route
+  app.route("/chat").get((req, res) => {
+    res.render("pug/chat", { user: req.user });
+  });
 
   // Handle missing pages (404)
   app.use((req, res, next) => {

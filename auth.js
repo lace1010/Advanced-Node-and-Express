@@ -56,6 +56,7 @@ module.exports = function (app, myDataBase) {
                 : "No public email",
               created_on: new Date(),
               provider: profile.provider || "",
+              // This is whats displayed on profile.pug because variable it calls for is username. Will give displayName, if that is null then it will give github username
               username: profile.displayName || profile.username,
             },
             $set: {

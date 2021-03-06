@@ -1,6 +1,5 @@
 $(document).ready(function () {
   let socket = io();
-  console.log(socket);
 
   // Get user count' from server.js and take its data (usercount) then log it
   socket.on("user count", (data) => {

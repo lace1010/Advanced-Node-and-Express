@@ -51,6 +51,6 @@ myDB(async (client) => {
 
 const PORT = process.env.PORT || 3000;
 // Need to listen to http server now that http is mounted
-http.listen(PORT, () => {
+app.listen(PORT, () => {
   console.log("Listening on port " + PORT);
 });

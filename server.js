@@ -8,6 +8,8 @@ const session = require("express-session");
 const myDB = require("./connection");
 const routes = require("./routes.js"); // passing all routes to this file to have clean code
 const auth = require("./auth.js"); // passing all auth to this file to have clean code
+const http = require("http").createServer(app);
+const io = require("socket.io")(http);
 
 const app = express();
 // Express needs to know which template engine we are using
@@ -35,6 +37,11 @@ myDB(async (client) => {
   // Use next two lines so we can use module.export in other files to use app and myDataBase in them
   routes(app, myDataBase);
   auth(app, myDataBase);
+
+  // To listen for connections to your server
+  io.on("connection", (socket) => {
+    console.log("A user has connected");
+  });
 }).catch((error) => {
   // This will display if we don't connect to database (example if string in .env is changed)
   app.route("/").get((req, res) => {
@@ -43,6 +50,7 @@ myDB(async (client) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
+// Need to listen to http server now that http is mounted
+http.listen(PORT, () => {
   console.log("Listening on port " + PORT);
 });

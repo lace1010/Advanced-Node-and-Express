@@ -58,7 +58,7 @@ module.exports = function (app, myDataBase) {
               provider: profile.provider || "",
               // This is whats displayed on profile.pug because variable it calls for is username. Will give displayName, if that is null then it will give github username
               username: profile.displayName || profile.username,
-              password: "You Will never guess",
+              password: "You Will never guess", // Do this to not throw an error when github login name is put in login form on index.pug
             },
             $set: {
               last_login: new Date(),

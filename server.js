@@ -66,8 +66,12 @@ myDB(async (client) => {
   io.on("connection", (socket) => {
     console.log("A user has connected");
     ++currentUsers;
-    io.emit("user count", currentUsers); // Use io.emit because taking information from io and sending it to socket in client.js
-    console.log("user " + socket.request.user.username + " connected");
+    io.emit("user count", {
+      name: socket.request.user.username,
+      currentUsers,
+      connection: true,
+    }); // Use io.emit because taking information from io and sending it to socket in client.js
+
     // use socket.on and not io.on because we use the parameter passed in this function listening for socket in client.js
     socket.on("disconnect", () => {
       console.log("A user has disconnected");

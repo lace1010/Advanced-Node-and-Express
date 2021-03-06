@@ -10,8 +10,11 @@ const routes = require("./routes.js"); // passing all routes to this file to hav
 const auth = require("./auth.js"); // passing all auth to this file to have clean code
 
 const app = express();
+
+// Needs to be after app as we are calling app into it's createServer()
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
+
 // Express needs to know which template engine we are using
 app.set("view engine", "pug");
 

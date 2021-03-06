@@ -9,6 +9,10 @@ html
   body
     h1.border.center FCC Advanced Node and Express Profile
     h2.center#welcome Welcome, #{username}!
-    img(src=user.photo style='width:150px; border-radius: 25%')
+    
+    if user.photo
+      hr
+      img(src=user.photo style='width:150px; border-radius: 25%')
+    
     a(href= '/logout') Logout
     

@@ -80,7 +80,7 @@ myDB(async (client) => {
     });
 
     socket.on("chat message", (message) => {
-      io.emit("chat message", { name: socket.request.user.name, message });
+      io.emit("chat message", { name: socket.request.user.username, message });
     });
   });
 }).catch((error) => {

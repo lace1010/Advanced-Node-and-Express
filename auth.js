@@ -44,7 +44,8 @@ module.exports = function (app, myDataBase) {
       },
       (accessToken, refreshToken, profile, cb) => {
         console.log(profile);
-        console.log(profile.login);
+        console.log(profile.username);
+        console.log(profile.displayName);
         console.log(profile.id);
         myDataBase.findOneAndUpdate(
           { id: profile.id },
@@ -58,7 +59,7 @@ module.exports = function (app, myDataBase) {
                 : "No public email",
               created_on: new Date(),
               provider: profile.provider || "",
-              username: profile.login || "Bish boy",
+              username: profile.username || "Bish boy",
             },
             $set: {
               last_login: new Date(),

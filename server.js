@@ -69,7 +69,7 @@ myDB(async (client) => {
     io.emit("user", {
       name: socket.request.user.username,
       currentUsers,
-      connection: true,
+      connected: true,
     }); // Use io.emit because taking information from io and sending it to socket in client.js
 
     // use socket.on and not io.on because we use the parameter passed in this function listening for socket in client.js

@@ -8,10 +8,10 @@ const session = require("express-session");
 const myDB = require("./connection");
 const routes = require("./routes.js"); // passing all routes to this file to have clean code
 const auth = require("./auth.js"); // passing all auth to this file to have clean code
-const http = require("http").createServer(app);
-const io = require("socket.io")(http);
 
 const app = express();
+const http = require("http").createServer(app);
+const io = require("socket.io")(http);
 // Express needs to know which template engine we are using
 app.set("view engine", "pug");
 
@@ -51,6 +51,6 @@ myDB(async (client) => {
 
 const PORT = process.env.PORT || 3000;
 // Need to listen to http server now that http is mounted
-app.listen(PORT, () => {
+http.listen(PORT, () => {
   console.log("Listening on port " + PORT);
 });

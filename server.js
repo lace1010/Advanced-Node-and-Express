@@ -41,9 +41,13 @@ myDB(async (client) => {
   routes(app, myDataBase);
   auth(app, myDataBase);
 
+  let currentUsers = 0;
   // To listen for connections to your server
+  // (socket) is the socket variable in client.js
   io.on("connection", (socket) => {
     console.log("A user has connected");
+    ++currentUsers;
+    io.emit("user count", currentUsers);
   });
 }).catch((error) => {
   // This will display if we don't connect to database (example if string in .env is changed)

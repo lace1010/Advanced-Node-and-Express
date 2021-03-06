@@ -15,6 +15,10 @@ const app = express();
 const http = require("http").createServer(app);
 const io = require("socket.io")(http);
 
+const MongoStore = require("connect-mongo")(session);
+const URI = process.env.MONGO_URI;
+const store = new MongoStore({ url: URI });
+
 // Express needs to know which template engine we are using
 app.set("view engine", "pug");
 
@@ -30,6 +34,8 @@ app.use(
     resave: true,
     saveUninitialized: true,
     cookie: { secure: false },
+    key: "express.sid",
+    store: store,
   })
 );
 app.use(passport.initialize());
@@ -41,14 +47,25 @@ myDB(async (client) => {
   routes(app, myDataBase);
   auth(app, myDataBase);
 
-  let currentUsers = 0;
   // To listen for connections to your server
   // (socket) is the socket variable in client.js
+  io.use(
+    passportSocketIo.authorize({
+      cookieParser: cookieParser,
+      key: "express.sid",
+      secret: process.env.SESSION_SECRET,
+      store: store,
+      success: onAuthorizeSuccess,
+      fail: onAuthorizeFail,
+    })
+  );
+
+  let currentUsers = 0;
   io.on("connection", (socket) => {
     console.log("A user has connected");
     ++currentUsers;
     io.emit("user count", currentUsers); // Use io.emit because taking information from io and sending it to socket in client.js
-
+    console.log("user " + socket.request.user.username + " connected");
     // use socket.on and not io.on because we use the parameter passed in this function listening for socket in client.js
     socket.on("disconnect", () => {
       console.log("A user has disconnected");
@@ -62,6 +79,18 @@ myDB(async (client) => {
     res.render("pug", { title: error, message: "Unable to login" });
   });
 });
+
+const onAuthorizeSuccess = (data, accept) => {
+  console.log("successful connection to socket.io");
+
+  accept(null, true);
+};
+
+const onAuthorizeFail = (data, message, error, accept) => {
+  if (error) throw new Error(message);
+  console.log("failed connection to socket.io:", message);
+  accept(null, false);
+};
 
 const PORT = process.env.PORT || 3000;
 // Need to listen to http server now that http is mounted

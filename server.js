@@ -19,7 +19,11 @@ const passportSocketIo = require("passport.socketio");
 const cookieParser = require("cookie-parser");
 const MongoStore = require("connect-mongo").default;
 const URI = process.env.MONGO_URI;
-const store = new MongoStore({ url: URI });
+const store = new MongoStore({
+  url: URI,
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
 
 // Express needs to know which template engine we are using
 app.set("view engine", "pug");

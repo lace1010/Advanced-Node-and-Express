@@ -45,6 +45,7 @@ module.exports = function (app, myDataBase) {
       (accessToken, refreshToken, profile, cb) => {
         console.log(profile);
         console.log(profile.login);
+        console.log(profile.id);
         myDataBase.findOneAndUpdate(
           { id: profile.id },
           {

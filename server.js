@@ -8,7 +8,6 @@ const session = require("express-session");
 const myDB = require("./connection");
 const routes = require("./routes.js"); // passing all routes to this file to have clean code
 const auth = require("./auth.js"); // passing all auth to this file to have clean code
-const GitHubStrategy = require("passport-github").Strategy;
 
 const app = express();
 // Express needs to know which template engine we are using

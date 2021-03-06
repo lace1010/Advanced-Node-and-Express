@@ -43,6 +43,7 @@ module.exports = function (app, myDataBase) {
           "https://advanced-node-express.herokuapp.com/auth/github/callback",
       },
       (accessToken, refreshToken, profile, cb) => {
+        console.log(profile);
         console.log(profile.login);
         myDataBase.findOneAndUpdate(
           { id: profile.id },
@@ -56,7 +57,7 @@ module.exports = function (app, myDataBase) {
                 : "No public email",
               created_on: new Date(),
               provider: profile.provider || "",
-              username: profile.login,
+              username: profile.login || "Bish boy",
             },
             $set: {
               last_login: new Date(),

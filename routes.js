@@ -27,6 +27,7 @@ module.exports = function (app, myDataBase) {
   app.route("/profile").get(ensureAuthenticated, (req, res) => {
     res.render(process.cwd() + "/views/pug/profile", {
       username: req.user.username,
+      photo: req.user.photo, // Add this to plug in github photo if social login
     });
   });
 

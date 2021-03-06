@@ -78,6 +78,10 @@ myDB(async (client) => {
       --currentUsers;
       io.emit("user count", currentUsers);
     });
+
+    socket.on("chat message", (message) => {
+      io.emit("chat message", { name: socket.request.user.name, message });
+    });
   });
 }).catch((error) => {
   // This will display if we don't connect to database (example if string in .env is changed)
